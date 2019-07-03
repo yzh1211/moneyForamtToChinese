@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>money</title>
+</head>
+<body>
+	<p>the money is <span id="money"></span></p>
+	<script type="text/javascript">
+		let unit = ['拾','佰','仟','万','亿'];
+		let chineseNumb =['零','壹','贰','叁','肆','伍','陆','柒','捌','玖'];
+		let str = "1567849000";
+		let numb_array = str.split('.');
+		let rst = "";
+		if (numb_array.length ===1) {
+			let intPart = numb_array[0]; 
+			let intPartLength = intPart.length;
+			if (intPartLength>13) {
+				alert("超出最大范围,请使用科学计数法");
+			}
+			if (intPartLength>9) {
+				//such as 1,000,000,000
+				let n2 = intPart.substring(intPartLength-12,intPartLength-8);
+				console.log(n2);
+					if (parseInt(n2) === 0) {
+						rst = rst+"";
+					}else{
+						rst = rst+turnToChineseBegin(n2)+"亿";
+					}
+				let n1 = intPart.substring(intPartLength-8,intPartLength-4);
+					if (parseInt(n1) ===0) {
+						rst = rst + "";
+					}else{
+						rst = rst+turnToChinese(n1)+"万";
+					}						
+				let n0 = intPart.substring(intPartLength-4,intPartLength);					
+					rst = rst+turnToChinese(n0);
+					rst.replace(/零零/,"零");
+				let r = rst.replace(/零零/g,"零");
+					if (r.substring(0,1) == "零") {
+						r = r.substring(0);
+					}
+					if (r.substring(r.length-1,r.length) == "零") {
+						r = r.substring(0,r.length-1)
+					}
+					console.log(r);
+
+			} 
+			if (intPartLength>4) {
+
+			}
+		}else{
+			let intPart = numb_array[0];
+			let floatPart = numb_array[1];
+
+		} 
+		function turnToChineseBegin(str){
+			let numb = parseInt(str);
+			if (numb >= 1000) {
+				let q = "";
+				q += chineseNumb[parseInt(numb/1000)]+"仟";
+				let b = parseInt(numb%1000/100);
+				if (b==0) {
+					q += "零";
+				}else{
+					q = q+ chineseNumb[b]+"佰";
+				}
+				let s = parseInt(numb%100/10);
+				if (s ==0) {
+					q = q + "零";
+				}else{
+					q =q + chineseNumb[s]+"拾";
+				}
+				let g = parseInt(numb%10);
+				if (g== 0) {
+					q=q+ "";
+				}else{
+					q = q + chineseNumb[g];
+				}
+				return q;
+			}else if (numb >=100 && numb < 1000) {
+				let q = "";
+				let b = parseInt(numb%1000/100);	
+					q = q+ chineseNumb[b]+"佰";
+				let s = parseInt(numb%100/10);
+				if (s ==0) {
+					q = q + "零";
+				}else{
+					q =q + chineseNumb[s]+"拾";
+				}
+				let g = parseInt(numb%10);
+				if (g== 0) {
+					q=q+ "";
+				}else{
+					q = q + chineseNumb[g];
+				}
+				return q;
+			}else if(numb >= 10 && numb < 100 ){
+				let q = "";
+				let s = parseInt(numb%100/10);
+					q =q + chineseNumb[s]+"拾";
+				let g = parseInt(numb%10);
+				if (g== 0) {
+					q=q+ "";
+				}else{
+					q = q + chineseNumb[g];
+				}
+				return q;
+			}else{
+				let q = "";
+				let g = parseInt(numb%10);
+				if (g== 0) {
+					alert("首位不应当为0");
+					return "";
+				}else{
+					return chineseNumb[g];
+				}
+			}
+		}
+		function turnToChinese(str){
+			let numb = parseInt(str);
+			if (numb >= 1000) {
+				let q = "";
+				q += chineseNumb[parseInt(numb/1000)]+"仟";
+				let b = parseInt(numb%1000/100);
+				if (b==0) {
+					q += "零";
+				}else{
+					q = q+ chineseNumb[b]+"佰";
+				}
+				let s = parseInt(numb%100/10);
+				if (s ==0) {
+					q = q + "零";
+				}else{
+					q =q + chineseNumb[s]+"拾";
+				}
+				let g = parseInt(numb%10);
+				if (g== 0) {
+					q=q+ "";
+				}else{
+					q = q + chineseNumb[g];
+				}
+				return q;
+			}else if (numb >=100 && numb < 1000) {
+				let q = "";
+				let b = parseInt(numb%1000/100);	
+					q = q+ chineseNumb[b]+"佰";
+				let s = parseInt(numb%100/10);
+				if (s ==0) {
+					q = q + "零";
+				}else{
+					q =q + chineseNumb[s]+"拾";
+				}
+				let g = parseInt(numb%10);
+				if (g== 0) {
+					q=q+ "";
+				}else{
+					q = q + chineseNumb[g];
+				}
+				return q;
+			}else if(numb >= 10 && numb < 100 ){
+				let q = "";
+				let s = parseInt(numb%100/10);
+					q =q + chineseNumb[s]+"拾";
+				let g = parseInt(numb%10);
+				if (g== 0) {
+					q=q+ "";
+				}else{
+					q = q + chineseNumb[g];
+				}
+				return q;
+			}else{
+				let q = "";
+				let g = parseInt(numb%10);
+				if (g== 0) {
+					return "";
+				}else{
+					return chineseNumb[g];
+				}
+			}
+		}
+	</script>
+</body>
+
+</html>
