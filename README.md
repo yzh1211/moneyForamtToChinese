@@ -1,2 +1,2 @@
 # moneyForamtToChinese
-use Chinese to express how much of the money 
+use Chinese to express how much of the price
