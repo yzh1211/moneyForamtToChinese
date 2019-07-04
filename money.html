@@ -2,182 +2,134 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>money</title>
+    <title>price</title>
 </head>
 <body>
-	<p>the money is <span id="money"></span></p>
+	<input type="text" id="price"><input type="button" value="开始" onclick="change()">
+	<p>the price is <span id="money"></span></p>
 	<script type="text/javascript">
-		let unit = ['拾','佰','仟','万','亿'];
+		/**
+		 * 费用转中文
+		 * @author 杨忠华 20190704 09:52
+		 */
+		//------------------------帅气无比的分割线-------------------------
+
 		let chineseNumb =['零','壹','贰','叁','肆','伍','陆','柒','捌','玖'];
-		let str = "1567849000";
-		let numb_array = str.split('.');
-		let rst = "";
-		if (numb_array.length ===1) {
-			let intPart = numb_array[0]; 
-			let intPartLength = intPart.length;
-			if (intPartLength>13) {
-				alert("超出最大范围,请使用科学计数法");
-			}
-			if (intPartLength>9) {
-				//such as 1,000,000,000
-				let n2 = intPart.substring(intPartLength-12,intPartLength-8);
-				console.log(n2);
-					if (parseInt(n2) === 0) {
-						rst = rst+"";
-					}else{
-						rst = rst+turnToChineseBegin(n2)+"亿";
-					}
-				let n1 = intPart.substring(intPartLength-8,intPartLength-4);
-					if (parseInt(n1) ===0) {
-						rst = rst + "";
-					}else{
-						rst = rst+turnToChinese(n1)+"万";
-					}						
-				let n0 = intPart.substring(intPartLength-4,intPartLength);					
-					rst = rst+turnToChinese(n0);
-					rst.replace(/零零/,"零");
-				let r = rst.replace(/零零/g,"零");
-					if (r.substring(0,1) == "零") {
-						r = r.substring(0);
-					}
-					if (r.substring(r.length-1,r.length) == "零") {
-						r = r.substring(0,r.length-1)
-					}
-					console.log(r);
 
-			} 
-			if (intPartLength>4) {
+		/**
+		 * 转换接口 传入字符串直接调用
+		 * @param str 需要传入的字符串
+		 * @returns {string} 返回的也是字符串
+		 */
+		function priceToChinese(str){
+		    //拆分成两部分，整数部分和小数部分
+		    let numb_array = str.split('.');
+		    //返回的结果
+		    let result = "";
+		    //获取到整数部分
+		    let intPart = numb_array[0];
+		    //整数部分长度
+		    let intPartLength = intPart.length;
+		    //只支持千亿级别的数据
+		    if (intPartLength>13) {
+		        alert("超出最大范围,请使用科学计数法");
+		    }
+		    if (intPartLength>9) {
+		        //亿的部分 n2亿
+		        let n2 = intPart.substring(intPartLength-12,intPartLength-8);
+		        if (parseInt(n2) !== 0) {
+		            result = result + turnToChinese(n2,true)+"亿";
+		        }
+		        //万的部分 n1万
+		        let n1 = intPart.substring(intPartLength-8,intPartLength-4);
+		        if (parseInt(n1) !==0) {
+		            result = result + turnToChinese(n1,false)+"万";
+		        }
+		        //少于一万的部分 n0
+		        let n0 = intPart.substring(intPartLength-4,intPartLength);
+		        result = result + turnToChinese(n0,false);
 
-			}
-		}else{
-			let intPart = numb_array[0];
-			let floatPart = numb_array[1];
+		        //当0作为结尾时不需要显示这个“零”
+		        if (result.endsWith("零",result.length)) {
+		            result = result.substring(0,result.length-1);
+		        }
+		    } else if (intPartLength>4) {
+		        //万的部分 n1万
+		        let n1 = intPart.substring(intPartLength-8,intPartLength-4);
+		        if (parseInt(n1) !==0) {
+		            result = result + turnToChinese(n1,true)+"万";
+		        }
+		        //少于一万的部分 n0
+		        let n0 = intPart.substring(intPartLength-4,intPartLength);
+		        result = result + turnToChinese(n0,false);
+		        //当0作为结尾时不需要显示这个“零”
+		        if (result.endsWith("零",result.length)) {
+		            result = result.substring(0,result.length-1);
+		        }
+		    }else if(intPartLength<=4){
+		        //少于一万的部分 n0
+		        let n0 = intPart.substring(intPartLength-4,intPartLength);
+		            result = result + turnToChinese(n0,true);
+		        if (result.endsWith("零",result.length)) {
+		            result = result.substring(0,result.length-1);
+		        }
+		    }
+		    //如果以小数点分割后 只有整数部分||小数部分为0，拼接上 “圆整”，否则还应加上“角分”单位
+		    if (numb_array.length ===1) {
+		        return result+"圆整";
+		    }else{
 
-		} 
-		function turnToChineseBegin(str){
-			let numb = parseInt(str);
-			if (numb >= 1000) {
-				let q = "";
-				q += chineseNumb[parseInt(numb/1000)]+"仟";
-				let b = parseInt(numb%1000/100);
-				if (b==0) {
-					q += "零";
-				}else{
-					q = q+ chineseNumb[b]+"佰";
-				}
-				let s = parseInt(numb%100/10);
-				if (s ==0) {
-					q = q + "零";
-				}else{
-					q =q + chineseNumb[s]+"拾";
-				}
-				let g = parseInt(numb%10);
-				if (g== 0) {
-					q=q+ "";
-				}else{
-					q = q + chineseNumb[g];
-				}
-				return q;
-			}else if (numb >=100 && numb < 1000) {
-				let q = "";
-				let b = parseInt(numb%1000/100);	
-					q = q+ chineseNumb[b]+"佰";
-				let s = parseInt(numb%100/10);
-				if (s ==0) {
-					q = q + "零";
-				}else{
-					q =q + chineseNumb[s]+"拾";
-				}
-				let g = parseInt(numb%10);
-				if (g== 0) {
-					q=q+ "";
-				}else{
-					q = q + chineseNumb[g];
-				}
-				return q;
-			}else if(numb >= 10 && numb < 100 ){
-				let q = "";
-				let s = parseInt(numb%100/10);
-					q =q + chineseNumb[s]+"拾";
-				let g = parseInt(numb%10);
-				if (g== 0) {
-					q=q+ "";
-				}else{
-					q = q + chineseNumb[g];
-				}
-				return q;
-			}else{
-				let q = "";
-				let g = parseInt(numb%10);
-				if (g== 0) {
-					alert("首位不应当为0");
-					return "";
-				}else{
-					return chineseNumb[g];
-				}
-			}
+		        let floatPart = parseInt(numb_array[1]);
+		        if (floatPart === 0) {
+		            return result + "圆整";
+		        }
+		            result = result + "圆";
+		        let j = parseInt(floatPart/10);
+		            result += chineseNumb[j]+"角";
+		        let fen = floatPart%10;
+		            result+=chineseNumb[fen]+"分";
+		        return result;
+		    }
 		}
-		function turnToChinese(str){
-			let numb = parseInt(str);
-			if (numb >= 1000) {
-				let q = "";
-				q += chineseNumb[parseInt(numb/1000)]+"仟";
-				let b = parseInt(numb%1000/100);
-				if (b==0) {
-					q += "零";
-				}else{
-					q = q+ chineseNumb[b]+"佰";
-				}
-				let s = parseInt(numb%100/10);
-				if (s ==0) {
-					q = q + "零";
-				}else{
-					q =q + chineseNumb[s]+"拾";
-				}
-				let g = parseInt(numb%10);
-				if (g== 0) {
-					q=q+ "";
-				}else{
-					q = q + chineseNumb[g];
-				}
-				return q;
-			}else if (numb >=100 && numb < 1000) {
-				let q = "";
-				let b = parseInt(numb%1000/100);	
-					q = q+ chineseNumb[b]+"佰";
-				let s = parseInt(numb%100/10);
-				if (s ==0) {
-					q = q + "零";
-				}else{
-					q =q + chineseNumb[s]+"拾";
-				}
-				let g = parseInt(numb%10);
-				if (g== 0) {
-					q=q+ "";
-				}else{
-					q = q + chineseNumb[g];
-				}
-				return q;
-			}else if(numb >= 10 && numb < 100 ){
-				let q = "";
-				let s = parseInt(numb%100/10);
-					q =q + chineseNumb[s]+"拾";
-				let g = parseInt(numb%10);
-				if (g== 0) {
-					q=q+ "";
-				}else{
-					q = q + chineseNumb[g];
-				}
-				return q;
-			}else{
-				let q = "";
-				let g = parseInt(numb%10);
-				if (g== 0) {
-					return "";
-				}else{
-					return chineseNumb[g];
-				}
-			}
+
+		/**
+		 * 辅助函数，用于把四位的字符串转成中文
+		 * @param str 输入的字符串
+		 * @param isBegin 是否是开头部分，开头部分和中间部分读法都不同
+		 * @returns {string} 四位字符串
+		 */
+		function turnToChinese(str,isBegin){
+		    let result = "";
+		    let numb = parseInt(str);
+		    if (numb === 0) {
+		        result = isBegin?"":"零";
+		    }else if(numb>0 && numb<10){
+		        let g = chineseNumb[numb];
+		            result = result + (isBegin?""+g:"零"+g);
+		    }else if (numb>=10 && numb<100) {
+		        let g = chineseNumb[parseInt(numb/10)]+"拾"+(numb%10===0?"":chineseNumb[numb%10]);
+		            result = result +(isBegin?""+g:"零"+g);
+		    }else if(numb>=100 && numb<1000){
+		        let g = chineseNumb[parseInt(numb/100)]+"佰"
+		            +(parseInt(numb%100/10)===0?"零":chineseNumb[parseInt(numb%100/10)]+"拾")
+		            +(numb%10===0?"":chineseNumb[numb%10]);
+		        result = result +(isBegin?""+g:"零"+g);
+		    }else{
+		        let g = chineseNumb[parseInt(numb/1000)]+"仟"
+		            +(parseInt(numb%1000/100)===0?"零":chineseNumb[parseInt(numb%1000/100)]+"佰")
+		            +(parseInt(numb%100/10)===0?"零":chineseNumb[parseInt(numb%100/10)]+"拾")
+		            +(numb%10===0?"":chineseNumb[numb%10]);
+		        result = result +g;
+		    }
+		    return result.replace(/零零/,"零");
+		}
+		
+	</script>
+	<script type="text/javascript">
+		function change(){
+
+			let price = document.getElementById("price").value;
+			document.getElementById("money").innerHTML = priceToChinese(price);
 		}
 	</script>
 </body>
