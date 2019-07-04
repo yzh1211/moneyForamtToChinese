@@ -14,7 +14,45 @@
 		 */
 		//------------------------帅气无比的分割线-------------------------
 
+		
 		let chineseNumb =['零','壹','贰','叁','肆','伍','陆','柒','捌','玖'];
+		/**
+		 * 辅助函数，用于把四位的字符串转成中文
+		 * @param str 输入的字符串
+		 * @param isBegin 是否是开头部分，开头部分和中间部分读法都不同
+		 * @returns {string} 四位字符串
+		 */
+		function turnToChinese(str,isBegin){
+		    let result = "";
+		    let numb = parseInt(str);
+		    if (numb === 0) {
+		        result = isBegin?"":"零";
+		    }else if(numb>0 && numb<10){
+		        //一位数
+		        let g = chineseNumb[numb];
+		        result = result + (isBegin?""+g:"零"+g);
+		    }else if (numb>=10 && numb<100) {
+		        //两位数
+		        let s = chineseNumb[parseInt(numb/10)]+"拾";
+		        let g = (numb%10===0?"":chineseNumb[numb%10]);
+		        result = result +(isBegin?""+s+g:"零"+s+g);
+		    }else if(numb>=100 && numb<1000){
+		        //三位数
+		        let b = chineseNumb[parseInt(numb/100)]+"佰";
+		        let s = (parseInt(numb%100/10)===0?"零":chineseNumb[parseInt(numb%100/10)]+"拾");
+		        let g = (numb%10===0?"":chineseNumb[numb%10]);
+		        result = result +(isBegin?""+b+s+g:"零"+b+s+g);
+		    }else{
+		        //四位数
+		        let q = chineseNumb[parseInt(numb/1000)]+"仟";
+		        let b = (parseInt(numb%1000/100)===0?"零":chineseNumb[parseInt(numb%1000/100)]+"佰");
+		        let s = (parseInt(numb%100/10)===0?"零":chineseNumb[parseInt(numb%100/10)]+"拾");
+		        let g = (numb%10===0?"":chineseNumb[numb%10]);
+		        result = result +q+b+s+g;
+		    }
+		    return result.replace(/零零/,"零");
+		}
+
 
 		/**
 		 * 转换接口 传入字符串直接调用
@@ -69,7 +107,7 @@
 		    }else if(intPartLength<=4){
 		        //少于一万的部分 n0
 		        let n0 = intPart.substring(intPartLength-4,intPartLength);
-		            result = result + turnToChinese(n0,true);
+		        result = result + turnToChinese(n0,true);
 		        if (result.endsWith("零",result.length)) {
 		            result = result.substring(0,result.length-1);
 		        }
@@ -78,51 +116,20 @@
 		    if (numb_array.length ===1) {
 		        return result+"圆整";
 		    }else{
-
-		        let floatPart = parseInt(numb_array[1]);
+		    	let fp = (numb_array[1]+"0").substring(0,2);
+		        let floatPart = parseInt(fp);
 		        if (floatPart === 0) {
 		            return result + "圆整";
 		        }
-		            result = result + "圆";
+		        result = result + "圆";
 		        let j = parseInt(floatPart/10);
-		            result += chineseNumb[j]+"角";
+		        result += chineseNumb[j]+"角";
 		        let fen = floatPart%10;
-		            result+=chineseNumb[fen]+"分";
+		        result+=chineseNumb[fen]+"分";
 		        return result;
 		    }
 		}
 
-		/**
-		 * 辅助函数，用于把四位的字符串转成中文
-		 * @param str 输入的字符串
-		 * @param isBegin 是否是开头部分，开头部分和中间部分读法都不同
-		 * @returns {string} 四位字符串
-		 */
-		function turnToChinese(str,isBegin){
-		    let result = "";
-		    let numb = parseInt(str);
-		    if (numb === 0) {
-		        result = isBegin?"":"零";
-		    }else if(numb>0 && numb<10){
-		        let g = chineseNumb[numb];
-		            result = result + (isBegin?""+g:"零"+g);
-		    }else if (numb>=10 && numb<100) {
-		        let g = chineseNumb[parseInt(numb/10)]+"拾"+(numb%10===0?"":chineseNumb[numb%10]);
-		            result = result +(isBegin?""+g:"零"+g);
-		    }else if(numb>=100 && numb<1000){
-		        let g = chineseNumb[parseInt(numb/100)]+"佰"
-		            +(parseInt(numb%100/10)===0?"零":chineseNumb[parseInt(numb%100/10)]+"拾")
-		            +(numb%10===0?"":chineseNumb[numb%10]);
-		        result = result +(isBegin?""+g:"零"+g);
-		    }else{
-		        let g = chineseNumb[parseInt(numb/1000)]+"仟"
-		            +(parseInt(numb%1000/100)===0?"零":chineseNumb[parseInt(numb%1000/100)]+"佰")
-		            +(parseInt(numb%100/10)===0?"零":chineseNumb[parseInt(numb%100/10)]+"拾")
-		            +(numb%10===0?"":chineseNumb[numb%10]);
-		        result = result +g;
-		    }
-		    return result.replace(/零零/,"零");
-		}
 		
 	</script>
 	<script type="text/javascript">
